@@ -4,7 +4,7 @@
  * Plugin Name:       WP-Cycle-reloaded
  * Plugin URI:        https://github.com/jrbeilke/WP-Cycle-reloaded
  * Description:       This is a fork of the WP-Cycle plugin with fixes to work with recent versions of WordPress. The WP-Cycle plugin allows you to upload images from your computer, which will then be used to generate a jQuery Cycle Plugin slideshow of the images.
- * Version:           0.1.14
+ * Version:           0.1.15
  * Author:            Nathan Rice, Jon Beilke
  * Author URI:        https://jrbeilke.com
  * License:           GPL-2.0+
@@ -44,21 +44,21 @@ to the proper actions in WordPress
 */
 
 //	this function registers our settings in the db
-add_action('admin_init', 'wp_cycle_register_settings');
-function wp_cycle_register_settings() {
-	register_setting('wp_cycle_images', 'wp_cycle_images', 'wp_cycle_images_validate');
-	register_setting('wp_cycle_settings', 'wp_cycle_settings', 'wp_cycle_settings_validate');
+add_action('admin_init', 'wp_cycle_reloaded_register_settings');
+function wp_cycle_reloaded_register_settings() {
+	register_setting('wp_cycle_images', 'wp_cycle_images', 'wp_cycle_reloaded_images_validate');
+	register_setting('wp_cycle_settings', 'wp_cycle_settings', 'wp_cycle_reloaded_settings_validate');
 }
 //	this function adds the settings page to the Appearance tab
-add_action('admin_menu', 'add_wp_cycle_menu');
-function add_wp_cycle_menu() {
-	add_submenu_page('upload.php', 'WP-Cycle Settings', 'WP-Cycle', 'upload_files', 'wp-cycle', 'wp_cycle_admin_page');
+add_action('admin_menu', 'add_wp_cycle_reloaded_menu');
+function add_wp_cycle_reloaded_menu() {
+	add_submenu_page('upload.php', 'WP-Cycle Reloaded Settings', 'WP-Cycle Reloaded', 'upload_files', 'wp-cycle', 'wp_cycle_reloaded_admin_page');
 }
 
 //	add "Settings" link to plugin page
-add_filter('plugin_action_links_' . plugin_basename(__FILE__) , 'wp_cycle_plugin_action_links');
-function wp_cycle_plugin_action_links($links) {
-	$wp_cycle_settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'upload.php?page=wp-cycle' ), __('Settings') );
+add_filter('plugin_action_links_' . plugin_basename(__FILE__) , 'wp_cycle_reloaded_plugin_action_links');
+function wp_cycle_reloaded_plugin_action_links($links) {
+	$wp_cycle_settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'upload.php?page=wp-cycle-reloaded' ), __('Settings') );
 	array_unshift($links, $wp_cycle_settings_link);
 	return $links;
 }
@@ -72,22 +72,22 @@ functions that handle image uploads and image settings
 changes, as well as producing the visible page output.
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-function wp_cycle_admin_page() {
+function wp_cycle_reloaded_admin_page() {
 	echo '<div class="wrap">';
 	
 		//	handle image upload, if necessary
 		if($_REQUEST['action'] == 'wp_handle_upload')
-			wp_cycle_handle_upload();
+			wp_cycle_reloaded_handle_upload();
 		
 		//	delete an image, if necessary
 		if(isset($_REQUEST['delete']))
-			wp_cycle_delete_upload($_REQUEST['delete']);
+			wp_cycle_reloaded_delete_upload($_REQUEST['delete']);
 		
 		//	the image management form
-		wp_cycle_images_admin();
+		wp_cycle_reloaded_images_admin();
 		
 		//	the settings management form
-		wp_cycle_settings_admin();
+		wp_cycle_reloaded_settings_admin();
 
 	echo '</div>';
 }
@@ -102,7 +102,7 @@ and deleting image data from the database.
 */
 //	this function handles the file upload,
 //	resize/crop, and adds the image data to the db
-function wp_cycle_handle_upload() {
+function wp_cycle_reloaded_handle_upload() {
 	global $wp_cycle_settings, $wp_cycle_images;
 	
 	//	upload the image
@@ -169,7 +169,7 @@ function wp_cycle_handle_upload() {
 
 //	this function deletes the image,
 //	and removes the image data from the db
-function wp_cycle_delete_upload($id) {
+function wp_cycle_reloaded_delete_upload($id) {
 	global $wp_cycle_images;
 	
 	//	if the ID passed to this function is invalid,
@@ -198,7 +198,7 @@ will display a notice, and reset the update option.
 */
 //	this function checks to see if we just updated the settings
 //	if so, it displays the "updated" message.
-function wp_cycle_settings_update_check() {
+function wp_cycle_reloaded_settings_update_check() {
 	global $wp_cycle_settings;
 	if(isset($wp_cycle_settings['update'])) {
 		echo '<div class="updated fade" id="message"><p>WP-Cycle Settings <strong>'.$wp_cycle_settings['update'].'</strong></p></div>';
@@ -208,7 +208,7 @@ function wp_cycle_settings_update_check() {
 }
 //	this function checks to see if we just added a new image
 //	if so, it displays the "updated" message.
-function wp_cycle_images_update_check() {
+function wp_cycle_reloaded_images_update_check() {
 	global $wp_cycle_images;
 	if($wp_cycle_images['update'] == 'Added' || $wp_cycle_images['update'] == 'Deleted' || $wp_cycle_images['update'] == 'Updated') {
 		echo '<div class="updated fade" id="message"><p>Image(s) '.$wp_cycle_images['update'].' Successfully</p></div>';
@@ -225,10 +225,10 @@ on the admin page. it's mostly form markup.
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
 //	display the images administration code
-function wp_cycle_images_admin() { ?>
+function wp_cycle_reloaded_images_admin() { ?>
 	<?php global $wp_cycle_images; ?>
-	<?php wp_cycle_images_update_check(); ?>
-	<h2><?php _e('WP-Cycle Images', 'wp_cycle'); ?></h2>
+	<?php wp_cycle_reloaded_images_update_check(); ?>
+	<h2><?php _e('WP-Cycle Reloaded Images', 'wp_cycle_reloaded'); ?></h2>
 	
 	<table class="form-table">
 		<tr valign="top"><th scope="row">Upload New Image</th>
@@ -290,10 +290,10 @@ function wp_cycle_images_admin() { ?>
 }
 
 //	display the settings administration code
-function wp_cycle_settings_admin() { ?>
+function wp_cycle_reloaded_settings_admin() { ?>
 
-	<?php wp_cycle_settings_update_check(); ?>
-	<h2><?php _e('WP-Cycle Settings', 'wp-cycle'); ?></h2>
+	<?php wp_cycle_reloaded_settings_update_check(); ?>
+	<h2><?php _e('WP-Cycle Reloaded Settings', 'wp_cycle_reloaded'); ?></h2>
 	<form method="post" action="options.php">
 	<?php settings_fields('wp_cycle_settings'); ?>
 	<?php global $wp_cycle_settings; $options = $wp_cycle_settings; ?>
@@ -375,7 +375,7 @@ gets stored in the database via options.php
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
 //	this function sanitizes our settings data for storage
-function wp_cycle_settings_validate($input) {
+function wp_cycle_reloaded_settings_validate($input) {
 	$input['rotate'] = ($input['rotate'] == 1 ? 1 : 0);
 	$input['effect'] = wp_filter_nohtml_kses($input['effect']);
 	$input['img_width'] = intval($input['img_width']);
@@ -385,7 +385,7 @@ function wp_cycle_settings_validate($input) {
 	return $input;
 }
 //	this function sanitizes our image data for storage
-function wp_cycle_images_validate($input) {
+function wp_cycle_reloaded_images_validate($input) {
 	foreach((array)$input as $key => $value) {
 		if($key != 'update') {
 			$input[$key]['file_url'] = clean_url($value['file_url']);
@@ -404,7 +404,7 @@ this final section generates all the code that
 is displayed on the front-end of the WP Theme
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-function wp_cycle($args = array(), $content = null) {
+function wp_cycle_reloaded($args = array(), $content = null) {
 	global $wp_cycle_settings, $wp_cycle_images;
 	
 	// possible future use
@@ -430,26 +430,26 @@ function wp_cycle($args = array(), $content = null) {
 }
 
 //	create the shortcode [wp_cycle]
-add_shortcode('wp_cycle', 'wp_cycle_shortcode');
-function wp_cycle_shortcode($atts) {
+add_shortcode('wp_cycle', 'wp_cycle_reloaded_shortcode');
+function wp_cycle_reloaded_shortcode($atts) {
 	
 	// Temp solution, output buffer the echo function.
 	ob_start();
-	wp_cycle();
+	wp_cycle_reloaded();
 	$output = ob_get_clean();
 	
 	return $output;
 	
 }
 
-add_action('wp_print_scripts', 'wp_cycle_scripts');
-function wp_cycle_scripts() {
+add_action('wp_print_scripts', 'wp_cycle_reloaded_scripts');
+function wp_cycle_reloaded_scripts() {
 	if(!is_admin())
 	wp_enqueue_script('cycle', plugins_url( 'jquery.cycle.all.min.js', __FILE__ ), array('jquery'), '3.0.3', true);
 }
 
-add_action('wp_footer', 'wp_cycle_args', 15);
-function wp_cycle_args() {
+add_action('wp_footer', 'wp_cycle_reloaded_args', 15);
+function wp_cycle_reloaded_args() {
 	global $wp_cycle_settings; ?>
 
 <?php if($wp_cycle_settings['rotate']) : ?>
@@ -468,8 +468,8 @@ jQuery(document).ready(function($) {
 
 <?php }
 
-add_action( 'wp_head', 'wp_cycle_style' );
-function wp_cycle_style() { 
+add_action( 'wp_head', 'wp_cycle_reloaded_style' );
+function wp_cycle_reloaded_style() { 
 	global $wp_cycle_settings;
 ?>
 	

@@ -127,3 +127,6 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 = 0.1.14 =
 * Updated jQuery Cycle plugin to 3.0.3
 * Fix URL for loading jquery.cycle.js to work with HTTPS and WordPress Multisite
+
+= 0.1.15 =
+* Fix wp_cycle conflicts so reloaded plugin can be installed alongside WP-Cycle
